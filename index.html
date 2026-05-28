@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>埔心里鄰長志工幹部 - 宜蘭太平山二日遊</title>
+    <style>
+        :root {
+            --primary-color: #1c4d3a; 
+            --accent-color: #d4ac0d;  
+            --bg-color: #f5f7f8;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            
+            /* 桌次彩色卡片顏色 (完全對齊圖一) */
+            --table1-color: #1e8449; /* 森林綠 */
+            --table2-color: #0d6efd; /* 活力藍 */
+            --table3-color: #17a2b8; /* 天空藍 */
+            --table4-color: #ffc107; /* 亮麗黃 */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Helvetica Neue", Helvetica, Arial, "PingFang TC", "Heiti TC", "Microsoft JhengHei", sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.7;
+            padding-bottom: 60px;
+            font-size: 1.15rem; /* 全局字體加大 */
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem;
+            border-bottom: 5px solid var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 2.2rem; /* 標題加大 */
+            margin-bottom: 0.5rem;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 1.5rem auto;
+            padding: 0 1rem;
+        }
+
+        /* 搜尋功能 */
+        .search-container {
+            background: var(--card-bg);
+            padding: 1.2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            margin-bottom: 1.5rem;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 0.9rem 1.2rem;
+            font-size: 1.2rem; /* 輸入框字體加大 */
+            border: 2px solid #ccd1d1;
+            border-radius: 6px;
+            outline: none;
+            font-weight: bold;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary-color);
+        }
+
+        .search-box button {
+            padding: 0.9rem 2rem;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.15rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .search-box button.btn-primary {
+            background-color: var(--primary-color);
+        }
+
+        /* 分頁按鈕標籤 */
+        .tabs-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 1rem 0.5rem;
+            background: white;
+            border: 2px solid #d5dbdb;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem; /* 按鈕字體加大 */
+            font-weight: bold;
+            color: #4d5656;
+            text-align: center;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* 面板顯示隱藏 */
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* ================= 行程卡片排版 (完全對齊圖二與圖三版面) ================= */
+        .schedule-card {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            margin-bottom: 1.5rem;
+        }
+
+        .time-tag {
+            display: inline-block;
+            background-color: #e8f8f5;
+            color: #1e8449;
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .schedule-item {
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #f2f4f4;
+            padding-bottom: 1.8rem;
+        }
+
+        .schedule-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .schedule-title {
+            font-size: 1.45rem; /* 標題字體放大 */
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 0.6rem;
+        }
+
+        /* 地圖咖啡色超連結 */
+        .schedule-title a.map-link {
+            color: #d35400;
+            text-decoration: underline;
+            text-underline-offset: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .schedule-title a.map-link:hover {
+            color: #a04000;
+        }
+
+        .schedule-desc {
+            color: #34495e;
+            font-size: 1.2rem; /* 內文字體放大 */
+            text-align: justify;
+        }
+
+        /* 上車時間表 */
+        .time-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+
+        .time-table th, .time-table td {
+            border: 2px solid #e5e7e9;
+            padding: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .time-table th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .banner-red {
+            background-color: #f9ebea;
+            border: 2px solid #f5b7b1;
+            color: #922b21;
+            padding: 14px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.25rem;
+            margin-top: 1rem;
+        }
+
+        /* ================= 餐廳桌次直立式彩色卡片 (完全對齊圖一) ================= */
+        .table-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .table-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 500px) {
+            .table-grid { grid-template-columns: 1fr; }
+        }
+
+        .table-card {
+            background: white;
+            border-radius: 8px;
+            border: 2.5px solid #ccc;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+        }
+
+        .table-card.t1 { border-color: var(--table1-color); }
+        .table-card.t2 { border-color: var(--table2-color); }
+        .table-card.t3 { border-color: var(--table3-color); }
+        .table-card.t4 { border-color: var(--table4-color); }
+
+        .table-header {
+            padding: 12px 10px;
+            text-align: center;
+            font-weight: bold;
+            color: white;
+            font-size: 1.3rem;
+        }
+        .t1 .table-header { background-color: var(--table1-color); }
+        .t2 .table-header { background-color: var(--table2-color); }
+        .t3 .table-header { background-color: var(--table3-color); }
+        .t4 .table-header { background-color: var(--table4-color); }
+
+        .member-list {
+            list-style: none;
+        }
+
+        .member-list li {
+            padding: 12px 10px;
+            text-align: center;
+            font-weight: bold;
+            border-bottom: 1px solid #f2f4f4;
+            font-size: 1.2rem; /* 人名加大 */
+        }
+        .member-list li:last-child { border-bottom: none; }
+
+        .vegie-banner {
+            text-align: center;
+            font-size: 1.35rem;
+            font-weight: bold;
+            color: #1e8449;
+            margin-top: 2rem;
+        }
+
+        /* ================= 遊覽車座位表 (最後一排格子尺寸與前面完全一致) ================= */
+        .bus-layout {
+            max-width: 500px;
+            margin: 0 auto;
+            background: #f4f6f6;
+            padding: 20px;
+            border-radius: 15px;
+            border: 2.5px solid #bdc3c7;
+        }
+
+        .bus-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 0.4fr 1fr 1fr; /* 網格分配比例 */
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .seat {
+            background: #fff;
+            border: 2px solid #bdc3c7;
+            padding: 12px 2px;
+            text-align: center;
+            font-size: 1.15rem; /* 座位名字放大 */
+            font-weight: bold;
+            border-radius: 6px;
+            min-height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 -3px 0 #eaeded;
+        }
+
+        .seat.bg-gray { background: #eaeded; border-color: #d5dbdb; color: #7f8c8d; font-size: 0.9rem; box-shadow: none; }
+        .seat.empty { background: transparent; border: none; box-shadow: none; }
+        .seat-name { color: #2c3e50; }
+
+        /* ================= 房間號碼樣式 ================= */
+        .room-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            gap: 15px;
+        }
+
+        .room-box {
+            background: white;
+            border: 2px solid #d5dbdb;
+            border-radius: 6px;
+            overflow: hidden;
+            text-align: center;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.03);
+        }
+
+        .room-num {
+            background-color: #ebf5fb;
+            padding: 10px;
+            font-weight: bold;
+            color: #2980b9;
+            border-bottom: 2px solid #d5dbdb;
+            font-size: 1.25rem;
+        }
+
+        .room-names {
+            padding: 14px;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* 彈出視窗 (Modal) */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .modal-content {
+            background: white; padding: 2.5rem; border-radius: 12px;
+            width: 90%; max-width: 440px; position: relative;
+            transform: scale(0.8); transition: transform 0.3s;
+            text-align: center;
+        }
+
+        .modal-overlay.active .modal-content { transform: scale(1); }
+
+        .modal-close { position: absolute; top: 12px; right: 15px; font-size: 1.8rem; cursor: pointer; color: #aaa; }
+
+        .result-title { color: var(--primary-color); margin-bottom: 1rem; font-size: 1.6rem; font-weight: bold; border-bottom: 3px solid #ebf5fb; padding-bottom: 8px; }
+        .result-item { font-size: 1.25rem; margin: 12px 0; padding: 12px; background: #f9f9f9; border-radius: 6px; display: flex; justify-content: space-between; border: 1px solid #eaeded; }
+        .result-label { font-weight: bold; color: #7f8c8d; }
+        .result-value { font-weight: bold; color: #111; }
+        .no-result { color: #c0392b; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>埔心里鄰長志工幹部</h1>
+        <p>宜蘭太平山、翠峰湖、鳳梨屋二日遊</p>
+    </header>
+
+    <div class="container">
+
+        <!-- 全局搜尋功能 -->
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="點此輸入名字全名，快速查座位、房號、桌次...">
+                <button class="btn-primary" onclick="searchMember()">搜尋</button>
+                <button onclick="clearSearch()">清除</button>
+            </div>
+        </div>
+
+        <!-- 頁籤按鈕 -->
+        <div class="tabs-container">
+            <button class="tab-btn active" onclick="switchTab(event, 'day1')">第一天行程</button>
+            <button class="tab-btn" onclick="switchTab(event, 'day2')">第二天行程</button>
+            <button class="tab-btn" onclick="switchTab(event, 'bus')">遊覽車座位</button>
+            <button class="tab-btn" onclick="switchTab(event, 'restaurant')">餐廳桌次</button>
+            <button class="tab-btn" onclick="switchTab(event, 'rooms')">房間號碼</button>
+        </div>
+
+        <!-- ================= 第一天行程 ================= -->
+        <div id="day1" class="tab-panel active">
+            <div class="schedule-card">
+                <h3 style="margin-bottom:12px; font-size: 1.4rem;">⏰ 5/29(五) 各站出發時間表</h3>
+                <table class="time-table">
+                    <thead>
+                        <tr><th>順序</th><th>上車地點</th><th>出發時間</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td style="color:#1e8449;">土地公廟</td><td style="color:#c0392b;">06 : 05 出發</td></tr>
+                        <tr><td>2</td><td style="color:#1f618d;">埔心國小</td><td style="color:#c0392b;">06 : 10 出發</td></tr>
+                        <tr><td>3</td><td>大埔心站牌</td><td style="color:#c0392b;">06 : 15 出發</td></tr>
+                        <tr><td>4</td><td style="color:#d35400;">里辦公室</td><td style="color:#c0392b;">06 : 25 一起出發</td></tr>
+                    </tbody>
+                </table>
+                <div class="banner-red">👕 ⚠️ 重要提醒：第一天（5/29）請穿著團體服！</div>
+            </div>
+
+            <div class="schedule-card">
+                <div class="schedule-item">
+                    <div class="time-tag">上午行程</div>
+                    <div class="schedule-title">國道風光 ➔ <a class="map-link" href="https://maps.google.com/?q=見晴懷古步道" target="_blank">見晴懷古步道 📍</a></div>
+                    <div class="schedule-desc">沿途欣賞國道優美風光，車上安排卡拉OK歡唱。抵達英士休息站後轉乘接駁專車前往主要景點，漫步運材鐵道，飽覽雲霧芬多精。</div>
+                </div>
+                <div class="schedule-item">
+                    <div class="time-tag">中午期間</div>
+                    <div class="schedule-title"><a class="map-link" href="https://maps.google.com/?q=翠峰湖" target="_blank">翠峰湖 📍</a> 享用高山便當</div>
+                    <div class="schedule-desc">在台灣最大的高山湖泊旁享用美味便當，欣賞多變的夢幻湖景。</div>
+                </div>
+                <div class="schedule-item">
+                    <div class="time-tag">下午行程</div>
+                    <div class="schedule-title"><a class="map-link" href="https://maps.google.com/?q=太平山國家森林遊樂區" target="_blank">太平山國家森林遊樂區 📍</a></div>
+                    <div class="schedule-desc">盡情吸收陰離子。※蹦蹦車需視現場票況，買到票即安排搭乘。</div>
+                </div>
+                <div class="schedule-item">
+                    <div class="time-tag">傍晚/晚間</div>
+                    <div class="schedule-title">入住 <a class="map-link" href="https://maps.google.com/?q=太平山英仕山莊" target="_blank">英仕山莊 📍</a> & 晚宴</div>
+                    <div class="schedule-desc">享用澎湃桌菜晚餐。餐後特別安排卡拉OK晚會與點心招待！過個愉快的夜晚。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 第二天行程 (完全依照圖三調整) ================= -->
+        <div id="day2" class="tab-panel">
+            <div class="schedule-card">
+                <div class="schedule-item">
+                    <div class="time-tag">07:00</div>
+                    <div class="schedule-title">晨喚、山莊早餐</div>
+                    <div class="schedule-desc">於山莊 1 樓餐廳享用豐盛早餐。</div>
+                </div>
+                <div class="schedule-item">
+                    <div class="time-tag">08:00</div>
+                    <div class="schedule-title">準時退房 出發</div>
+                    <div class="schedule-desc">請配合將個人行李全部帶上車。</div>
+                </div>
+                <div class="schedule-item">
+                    <div class="time-tag">上午行程</div>
+                    <div class="schedule-title"><a class="map-link" href="https://maps.google.com/?q=九寮溪自然步道" target="_blank">九寮溪自然步道 📍</a></div>
+                    <div class="schedule-desc">步道平坦舒適、溪水冰涼清澈，終點可觀賞壯麗的九寮溪瀑布。</div>
+                </div>
+                <div class="schedule-item">
+                    <div class="time-tag">下午行程</div>
+                    <div class="schedule-title"><a class="map-link" href="https://maps.google.com/?q=鳳梨屋水上莊園" target="_blank">鳳梨屋水上莊園 📍</a></div>
+                    <div class="schedule-desc">人氣網美聖地！包含浪漫水灘瀑布鞦韆、月亮躺椅，拍照超吸睛。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 遊覽車座位 (最後一排網格比例與前面完全同步) ================= -->
+        <div id="bus" class="tab-panel">
+            <div class="bus-layout">
+                <div class="bus-row">
+                    <div class="seat bg-gray">駕駛員</div><div class="seat empty"></div><div class="seat empty"></div><div class="seat bg-gray">領隊</div><div class="seat bg-gray">前門</div>
+                </div>
+                <div class="bus-row">
+                    <div class="seat"><span class="seat-name">呂燕玉</span></div><div class="seat"><span class="seat-name">劉玉田</span></div><div class="seat empty"></div><div class="seat empty"></div><div class="seat empty"></div>
+                </div>
+                <div class="bus-row">
+                    <div class="seat empty"></div><div class="seat"><span class="seat-name">盧宜芳</span></div><div class="seat empty"></div><div class="seat empty"></div><div class="seat empty"></div>
+                </div>
+                <div class="bus-row">
+                    <div class="seat"><span class="seat-name">李傳培</span></div><div class="seat"><span class="seat-name">賴矜桂</span></div><div class="seat empty"></div><div class="seat"><span class="seat-name">盧宜芳</span></div><div class="seat"><span class="seat-name">游源隆</span></div>
+                </div>
+                <div class="bus-row">
+                    <div class="seat"><span class="seat-name">郭秋雪</span></div><div class="seat"><span class="seat-name">戴美菊</span></div><div class="seat empty"></div><div class="seat"><span class="seat-name">沈原祿</span></div><div class="seat"><span class="seat-name">沈睿恩</span></div>
+                </div>
+                <div class="bus-row">
+                    <div class="seat"><span class="seat-name">李玉貴</span></div><div class="seat"><span class="seat-name">呂學修</span></div><div class="seat empty"></div><div class="seat"><span class="seat-name">李碧雲</span></div><div class="seat"><span class="seat-name">郭秀霞</span></div>
+                </div>
+                <div class="bus-row">
+                    <div class="seat"><span class="seat-name">游素月</span></div><div class="seat"><span class="seat-name">廖又賢</span></div><div class="seat empty"></div><div class="seat"><span class="seat-name">黃慧俊</span></div><div class="seat"><span class="seat-name">李政村</span></div>
+                </div>
+                <div class="bus-row">
+                    <div class="seat bg-gray">安全門</div><div class="seat empty"></div><div class="seat empty"></div><div class="seat empty"></div><div class="seat bg-gray">後門</div>
+                </div>
+                <div class="bus-row">
+                    <div class="seat"><span class="seat-name">王文亮</span></div><div class="seat"><span class="seat-name">鄭淑娟</span></div><div class="seat empty"></div><div class="seat empty"></div><div class="seat empty"></div>
+                </div>
+                <div class="bus-row">
+                    <div class="seat"><span class="seat-name">游宏鈞</span></div><div class="seat"><span class="seat-name">黃家羚</span></div><div class="seat empty"></div><div class="seat"><span class="seat-name">張舟輕</span></div><div class="seat"><span class="seat-name">陳正則</span></div>
+                </div>
+                <div class="bus-row">
+                    <div class="seat"><span class="seat-name">游獲廣</span></div><div class="seat"><span class="seat-name">詹翠翠</span></div><div class="seat empty"></div><div class="seat"><span class="seat-name">張遠福</span></div><div class="seat"><span class="seat-name">傅新媚</span></div>
+                </div>
+                <div class="bus-row">
+                    <div class="seat"><span class="seat-name">李應章</span></div><div class="seat"><span class="seat-name">簡松勇</span></div><div class="seat empty"></div><div class="seat"><span class="seat-name">李政益</span></div><div class="seat"><span class="seat-name">王富美</span></div>
+                </div>
+                <div class="bus-row">
+                    <div class="seat"><span class="seat-name">倪惠英</span></div><div class="seat"><span class="seat-name">呂雅筑</span></div><div class="seat empty"></div><div class="seat"><span class="seat-name">游源和</span></div><div class="seat"><span class="seat-name">邱明瑞</span></div>
+                </div>
+                <!-- 最後一排：四個格子的寬度尺寸與前方各排完全一樣大 -->
+                <div class="bus-row">
+                    <div class="seat"><span class="seat-name">毛瑜琳</span></div><div class="seat"><span class="seat-name">李鳳玉</span></div><div class="seat empty"></div><div class="seat"><span class="seat-name">胡玉蓮</span></div><div class="seat"><span class="seat-name">蔡美足</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 餐廳桌次 (直立式彩色卡片) ================= -->
+        <div id="restaurant" class="tab-panel">
+            <div class="table-grid">
+                <div class="table-card t1">
+                    <div class="table-header">第一桌</div>
+                    <ul class="member-list">
+                        <li>游源隆</li><li>盧宜芳</li><li>張舟輕</li><li>陳正則</li><li>張遠福</li><li>傅新媚</li><li>王文亮</li><li>鄭淑娟</li><li>簡松勇</li>
+                    </ul>
+                </div>
+                <div class="table-card t2">
+                    <div class="table-header">第二桌</div>
+                    <ul class="member-list">
+                        <li>李傳培</li><li>賴矜桂</li><li>李政村</li><li>黃慧俊</li><li>李玉貴</li><li>呂學修</li><li>李政益</li><li>王富美</li><li>沈原祿</li><li>沈睿恩</li>
+                    </ul>
+                </div>
+                <div class="table-card t3">
+                    <div class="table-header">第三桌</div>
+                    <ul class="member-list">
+                        <li>倪惠英</li><li>呂雅筑</li><li>李應章</li><li>游素月</li><li>廖又賢</li><li>劉玉田</li><li>李碧雲</li><li>郭秀霞</li><li>郭秋雪</li><li>戴美菊</li>
+                    </ul>
+                </div>
+                <div class="table-card t4">
+                    <div class="table-header">第四桌</div>
+                    <ul class="member-list">
+                        <li>游源和</li><li>邱明瑞</li><li>游獲廣</li><li>詹翠翠</li><li>游宏鈞</li><li>黃家羚</li><li>蔡美足</li><li>胡玉蓮</li><li>李鳳玉</li><li>毛瑜琳</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="vegie-banner">🥦 素食：呂燕玉（隨第三桌用餐）</div>
+        </div>
+
+        <!-- ================= 房間號碼 ================= -->
+        <div id="rooms" class="tab-panel">
+            <div class="room-grid">
+                <div class="room-box"><div class="room-num">101  房</div><div class="room-names">李政益<br>王富美</div></div>
+                <div class="room-box"><div class="room-num">102 房</div><div class="room-names">簡松勇<br>李應章</div></div>
+                <div class="room-box"><div class="room-num">103 房</div><div class="room-names">游源隆<br>盧宜芳</div></div>
+                <div class="room-box"><div class="room-num">105 房</div><div class="room-names">游源和<br>邱明瑞</div></div>
+                <div class="room-box"><div class="room-num">106 房</div><div class="room-names">蔡美足<br>胡玉蓮</div></div>
+                <div class="room-box"><div class="room-num">107 房</div><div class="room-names">李鳳玉<br>毛瑜琳</div></div>
+                <div class="room-box"><div class="room-num">108 房</div><div class="room-names">李傳培<br>賴矜桂</div></div>
+                <div class="room-box"><div class="room-num">109 房</div><div class="room-names">李政村<br>黃慧俊</div></div>
+                <div class="room-box"><div class="room-num">110 房</div><div class="room-names">沈原祿<br>沈睿恩</div></div>
+                <div class="room-box"><div class="room-num">111 房</div><div class="room-names">張舟輕<br>陳正則</div></div>
+                <div class="room-box"><div class="room-num">112 房</div><div class="room-names">倪惠英<br>呂雅筑</div></div>
+                <div class="room-box"><div class="room-num">113 房</div><div class="room-names">李碧雲<br>郭秀霞</div></div>
+                <div class="room-box"><div class="room-num">115 房</div><div class="room-names">張遠福<br>傅新媚</div></div>
+                <div class="room-box"><div class="room-num">116 房</div><div class="room-names">郭秋雪<br>戴美菊</div></div>
+                <div class="room-box"><div class="room-num">117 房</div><div class="room-names">游素月<br>廖又賢</div></div>
+                <div class="room-box"><div class="room-num">118 房</div><div class="room-names">王文亮<br>鄭淑娟</div></div>
+                <div class="room-box"><div class="room-num">301 房</div><div class="room-names">游宏鈞<br>黃家羚</div></div>
+                <div class="room-box"><div class="room-num">302 房</div><div class="room-names">游獲廣<br>詹翠翠</div></div>
+                <div class="room-box"><div class="room-num">303 房</div><div class="room-names">李玉貴<br>呂學修</div></div>
+                <div class="room-box"><div class="room-num">305 房</div><div class="room-names">呂燕玉<br>劉玉田</div></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 搜尋彈出視窗 -->
+    <div class="modal-overlay" id="searchModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(evt, panelId) {
+            const panels = document.getElementsByClassName('tab-panel');
+            for (let i = 0; i < panels.length; i++) panels[i].classList.remove('active');
+            const tabs = document.getElementsByClassName('tab-btn');
+            for (let i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+            document.getElementById(panelId).classList.add('active');
+            evt.currentTarget.classList.add('active');
+        }
+
+        const memberDatabase = [
+            { name: "游源隆", seat: "右側第3排窗位", table: "第一桌", room: "103 房" },
+            { name: "盧宜芳", seat: "右側第3排走道位 / 第2排窗位", table: "第一桌", room: "103 房" },
+            { name: "張舟輕", seat: "右側第8排走道位", table: "第一桌", room: "111 房" },
+            { name: "陳正則", seat: "右側第8排窗位", table: "第一桌", room: "111 房" },
+            { name: "張遠福", seat: "右側第9排走道位", table: "第一桌", room: "115 房" },
+            { name: "傅新媚", seat: "右側第9排窗位", table: "第一桌", room: "115 房" },
+            { name: "王文亮", seat: "左側第7排窗位", table: "第一桌", room: "118 房" },
+            { name: "鄭淑娟", seat: "左側第7排走道位", table: "第一桌", room: "118 房" },
+            { name: "簡松勇", seat: "左側第10排走道位", table: "第一桌", room: "102 房" },
+            { name: "李傳培", seat: "左側第3排窗位", table: "第二桌", room: "108 房" },
+            { name: "賴矜桂", seat: "左側第3排走道位", table: "第二桌", room: "108 房" },
+            { name: "李政村", seat: "右側第6排窗位", table: "第二桌", room: "109 房" },
+            { name: "黃慧俊", seat: "右側第6排走道位", table: "第二桌", room: "109 房" },
+            { name: "李玉貴", seat: "左側第5排窗位", table: "第二桌", room: "303 房" },
+            { name: "呂學修", seat: "左側第5排走道位", table: "第二桌", room: "303 房" },
+            { name: "呂燕玉", seat: "左側第1排走道位 (素食)", table: "第三桌旁用餐 (吃素)", room: "305 房" },
+            { name: "劉玉田", seat: "左側第1排窗位", table: "第二桌", room: "305 房" },
+            { name: "沈原祿", seat: "右側第4排走道位", table: "第二桌", room: "110 房" },
+            { name: "沈睿恩", seat: "右側第4排窗位", table: "第二桌", room: "110 房" },
+            { name: "李政益", seat: "右側第10排走道位", table: "第二桌", room: "101 房" },
+            { name: "王富美", seat: "右側第10排窗位", table: "第二桌", room: "101 房" },
+            { name: "倪惠英", seat: "左側第11排窗位", table: "第三桌", room: "112 房" },
+            { name: "呂雅筑", seat: "左側第11排走道位", table: "第三桌", room: "112 房" },
+            { name: "李應章", seat: "左側第10排窗位", table: "第三桌", room: "102 房" },
+            { name: "游素月", seat: "左側第6排窗位", table: "第三桌", room: "117 房" },
+            { name: "廖又賢", seat: "左側第6排走道位", table: "第三桌", room: "117 房" },
+            { name: "李碧雲", seat: "右側第5排走道位", table: "第三桌", room: "113 房" },
+            { name: "郭秀霞", seat: "右側第5排窗位", table: "第三桌", room: "113 房" },
+            { name: "郭秋雪", seat: "左側第4排窗位", table: "第三桌", room: "116 房" },
+            { name: "戴美菊", seat: "左側第4排走道位", table: "第三桌", room: "116 房" },
+            { name: "游源和", seat: "右側第11排走道位", table: "第四桌", room: "105 房" },
+            { name: "邱明瑞", seat: "右側第11排窗位", table: "第四桌", room: "105 房" },
+            { name: "游獲廣", seat: "左側第9排走道位", table: "第四桌", room: "302 房" },
+            { name: "詹翠翠", seat: "左側第9排窗位", table: "第四桌", room: "302 房" },
+            { name: "游宏鈞", seat: "左側第8排窗位", table: "第四桌", room: "301 房" },
+            { name: "黃家羚", seat: "左側第8排走道位", table: "第四桌", room: "301 房" },
+            { name: "蔡美足", seat: "最後一排右側窗位", table: "第四桌", room: "106 房" },
+            { name: "胡玉蓮", seat: "最後一排right側走道位", table: "第四桌", room: "106 房" },
+            { name: "李鳳玉", seat: "最後一排left側走道位", table: "第四桌", room: "107 房" },
+            { name: "毛瑜琳", seat: "最後一排left側窗位", table: "第四桌", room: "107 房" }
+        ];
+
+        // 搜尋主邏輯
+        function searchMember() {
+            const input = document.getElementById('searchInput').value.trim();
+            const modal = document.getElementById('searchModal');
+            const modalBody = document.getElementById('modalBody');
+            if (input === "") { alert("請輸入姓名"); return; }
+
+            const results = memberDatabase.filter(m => m.name.includes(input));
+            if (results.length > 0) {
+                let html = '';
+                results.forEach(m => {
+                    html += `
+                        <div class="result-title">個人活動資訊對照：${m.name}</div>
+                        <div class="result-item"><span class="result-label">遊覽車座位</span><span class="result-value">${m.seat}</span></div>
+                        <div class="result-item"><span class="result-label">餐廳桌次</span><span class="result-value">${m.table}</span></div>
+                        <div class="result-item"><span class="result-label">飯店房間號碼</span><span class="result-value" style="color:#2980b9;">${m.room}</span></div>
+                    `;
+                });
+                modalBody.innerHTML = html;
+            } else {
+                modalBody.innerHTML = `<div class="result-title no-result">查無此姓名資訊</div>`;
+            }
+            modal.classList.add('active');
+        }
+
+        function clearSearch() { document.getElementById('searchInput').value = ''; closeModal(); }
+        function closeModal() { document.getElementById('searchModal').classList.remove('active'); }
+        window.onclick = function(e) { if (e.target === document.getElementById('searchModal')) closeModal(); }
+        document.getElementById('searchInput').addEventListener('keypress', function (e) { if (e.key === 'Enter') searchMember(); });
+    </script>
+</body>
+</html>
